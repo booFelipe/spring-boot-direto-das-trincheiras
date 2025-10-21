@@ -1,3 +1,15 @@
 spring:
   application:
     name: anime-service
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  servlet:
+    context-path: /
+  error:
+    include-stacktrace: on_param #incluir a stacktrace na resposta do serviço tag on_param precisa passar ?trace=true
+  tomcat:
+    threads:
+      max: 20
