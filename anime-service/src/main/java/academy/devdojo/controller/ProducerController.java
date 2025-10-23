@@ -1,8 +1,11 @@
 package academy.devdojo.controller;
 
+import academy.devdojo.domain.Anime;
 import academy.devdojo.domain.Producer;
 import academy.devdojo.mapper.ProducerMapper;
+import academy.devdojo.request.AnimePutRequest;
 import academy.devdojo.request.ProducerPostRequest;
+import academy.devdojo.request.ProducerPutRequest;
 import academy.devdojo.response.ProducerGetResponse;
 import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
@@ -74,6 +77,24 @@ public class ProducerController {
 
         log.debug("producers: {}", producerToDelete);
         Producer.getProducers().remove(producerToDelete);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> update(@RequestBody ProducerPutRequest producerPutRequest) {
+        log.debug("Request to update producer by body: {}", producerPutRequest);
+
+        var producerToRemove = Producer.getProducers()
+                .stream()
+                .filter(producer -> producer.getId().equals(producerPutRequest.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Producer not Found"));
+
+        var producerUpdated = MAPPER.toProducer(producerPutRequest, producerToRemove.getCreatedAt());
+
+        Producer.getProducers().remove(producerToRemove);
+        Producer.getProducers().add(producerUpdated);
 
         return ResponseEntity.noContent().build();
     }
