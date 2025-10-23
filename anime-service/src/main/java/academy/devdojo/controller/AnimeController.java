@@ -3,21 +3,18 @@ package academy.devdojo.controller;
 import academy.devdojo.domain.Anime;
 import academy.devdojo.domain.Producer;
 import academy.devdojo.mapper.AnimeMapper;
-import academy.devdojo.mapper.ProducerMapper;
 import academy.devdojo.request.AnimePostRequest;
-import academy.devdojo.request.ProducerPostRequest;
 import academy.devdojo.response.AnimeGetResponse;
 import academy.devdojo.response.AnimePostResponse;
-import academy.devdojo.response.ProducerGetResponse;
 import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequestMapping(value = "v1/animes")
@@ -32,7 +29,7 @@ public class AnimeController {
         log.debug("Request to find all animes, param name '{}'", name);
 
         var animes = Anime.getAnimes();
-        var animeGetResponseList = MAPPER.toAnimeGetResponses(animes);
+        var animeGetResponseList = MAPPER.toAnimeGetResponseList(animes);
 
         if (name == null) return ResponseEntity.ok(animeGetResponseList);
 
@@ -50,7 +47,7 @@ public class AnimeController {
                 .filter(anime -> anime.getId().equals(id))
                 .findFirst()
                 .map(MAPPER::toAnimeGetResponse)
-                .orElse(null);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
 
         return ResponseEntity.ok(animeGetResponse);
     }
@@ -65,5 +62,20 @@ public class AnimeController {
         var response = MAPPER.toAnimePostResponse(anime);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        log.debug("Request to delete anime by id: {}", id);
+        var animeToDelete = Anime.getAnimes()
+                .stream()
+                .filter(anime -> anime.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
+
+        log.debug("anime: {}", animeToDelete);
+        Anime.getAnimes().remove(animeToDelete);
+
+        return ResponseEntity.noContent().build();
     }
 }
