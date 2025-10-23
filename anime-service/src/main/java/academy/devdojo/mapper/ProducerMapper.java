@@ -1,8 +1,6 @@
 package academy.devdojo.mapper;
 
-import academy.devdojo.domain.Anime;
 import academy.devdojo.domain.Producer;
-import academy.devdojo.request.AnimePutRequest;
 import academy.devdojo.request.ProducerPostRequest;
 import academy.devdojo.request.ProducerPutRequest;
 import academy.devdojo.response.ProducerGetResponse;
@@ -10,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -22,7 +19,7 @@ public interface ProducerMapper {
     Producer toProducer(ProducerPostRequest postRequest);
 
 
-    Producer toProducer(ProducerPutRequest putRequest, LocalDateTime createdAt);
+    Producer toProducer(ProducerPutRequest request);
 
     ProducerGetResponse toProducerGetResponse(Producer producer);
 
