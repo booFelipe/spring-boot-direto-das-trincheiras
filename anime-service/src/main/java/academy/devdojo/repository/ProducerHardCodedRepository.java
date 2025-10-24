@@ -1,12 +1,14 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.domain.Producer;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class ProducerHardCodedRepository {
 
     private static final List<Producer> PRODUCERS = new ArrayList<Producer>();
@@ -41,7 +43,6 @@ public class ProducerHardCodedRepository {
     }
     public void update(Producer producer) {
         delete(producer);
-        var teste = findAll();
         save(producer);
     }
 }
