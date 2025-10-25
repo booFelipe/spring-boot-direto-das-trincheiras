@@ -8,8 +8,7 @@ import academy.devdojo.response.ProducerGetResponse;
 import academy.devdojo.response.ProducerPostResponse;
 import academy.devdojo.service.ProducerService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,13 +19,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "v1/producers")
+@Slf4j
 @RequiredArgsConstructor
 public class ProducerController {
 
-
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(ProducerController.class);
-    private static final ProducerMapper MAPPER = ProducerMapper.INSTANCE;
-
+    private final ProducerMapper mapper;
     private final ProducerService service;
 
 
@@ -35,7 +32,7 @@ public class ProducerController {
         log.debug("Request to find all producers, param name '{}'", name);
 
         var producers = service.findAll(name);
-        var producerGetResponses = MAPPER.toProducerGetResponseList(producers);
+        var producerGetResponses = mapper.toProducerGetResponseList(producers);
 
         return ResponseEntity.ok(producerGetResponses);
     }
@@ -45,7 +42,7 @@ public class ProducerController {
         log.debug("Request to find producer by id: {}", id);
 
         var producer = service.findByIdOrThrowNotFound(id);
-        var producerGetResponse = MAPPER.toProducerGetResponse(producer);
+        var producerGetResponse = mapper.toProducerGetResponse(producer);
 
         return ResponseEntity.ok(producerGetResponse);
     }
@@ -54,9 +51,9 @@ public class ProducerController {
     public ResponseEntity<ProducerPostResponse> save(@RequestBody ProducerPostRequest producerPostRequest, @RequestHeader HttpHeaders headers) {
         log.info("Headers : {}", headers);
 
-        var producer = MAPPER.toProducer(producerPostRequest);
+        var producer = mapper.toProducer(producerPostRequest);
         Producer producerSaved = service.save(producer);
-        var producerGetResponse = MAPPER.toProducerPostResponse(producerSaved);
+        var producerGetResponse = mapper.toProducerPostResponse(producerSaved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(producerGetResponse);
     }
@@ -74,7 +71,7 @@ public class ProducerController {
     public ResponseEntity<Void> update(@RequestBody ProducerPutRequest request) {
         log.debug("Request to update producer by body: {}", request);
 
-        var producerToUpdate = MAPPER.toProducer(request);
+        var producerToUpdate = mapper.toProducer(request);
 
         service.update(producerToUpdate);
 
