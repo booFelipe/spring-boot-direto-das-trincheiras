@@ -1,6 +1,8 @@
 package academy.devdojo.repository;
 
 import academy.devdojo.domain.Anime;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -8,38 +10,31 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
+@Log4j2
 public class AnimeHardCodedRepository {
 
-    private static final List<Anime> ANIMES = new ArrayList<Anime>();
-
-    static {
-        var naruto = Anime.builder().id(1L).name("Naruto").build();
-        var boruto = Anime.builder().id(2L).name("Boruto").build();
-        var onePiece = Anime.builder().id(3L).name("One Piece").build();
-
-        ANIMES.addAll(List.of(naruto, boruto, onePiece));
-
-    }
+   private final AnimeData animeData;
 
     public List<Anime> findAll() {
-        return ANIMES;
+        return animeData.getAnimes();
     }
 
     public Optional<Anime> findById(Long id) {
-        return ANIMES.stream().filter(anime -> anime.getId().equals(id)).findFirst();
+        return animeData.getAnimes().stream().filter(anime -> anime.getId().equals(id)).findFirst();
     }
 
     public List<Anime> findByName(String name) {
-        return ANIMES.stream().filter(anime -> anime.getName().equals(name)).toList();
+        return animeData.getAnimes().stream().filter(anime -> anime.getName().equals(name)).toList();
     }
 
     public Anime save(Anime anime) {
-        ANIMES.add(anime);
+        animeData.getAnimes().add(anime);
         return anime;
     }
 
     public void delete(Anime anime) {
-        ANIMES.remove(anime);
+        animeData.getAnimes().remove(anime);
     }
 
     public void update(Anime anime) {

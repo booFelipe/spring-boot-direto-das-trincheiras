@@ -111,6 +111,7 @@ class ProducerHardCodedRepositoryTest {
     @Order(7)
     void update_UpdatesProducer_WhenSuccessful() {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
+
         var producerToUpdate = this.producerList.getFirst();
         producerToUpdate.setName("Aniplex");
 
