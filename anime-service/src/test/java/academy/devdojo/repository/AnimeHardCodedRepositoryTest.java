@@ -22,7 +22,7 @@ class AnimeHardCodedRepositoryTest {
 
     @Mock
     private AnimeData animeData;
-    private final List<Anime> animeList = new ArrayList<>();
+    private List<Anime> animeList;
 
     @BeforeEach
     void init(){
@@ -30,7 +30,7 @@ class AnimeHardCodedRepositoryTest {
         var onePiece = Anime.builder().id(2L).name("One Piece").build();
         var giantsOfGear = Anime.builder().id(3L).name("Giants Of Gear").build();
 
-        animeList.addAll(List.of(onePunch, onePiece, giantsOfGear));
+        animeList = new ArrayList<>(List.of(onePunch, onePiece, giantsOfGear));
 
     }
 
@@ -83,7 +83,7 @@ class AnimeHardCodedRepositoryTest {
     void save_CreatesAnime_WhenSuccessful() {
         BDDMockito.when(animeData.getAnimes()).thenReturn(animeList);
 
-        var animeToSave = Anime.builder().id(99L).name("Anime Test").build();
+        var animeToSave = Anime.builder().id(99L).name("Pokémon").build();
         var anime = repository.save(animeToSave);
 
         Assertions.assertThat(anime).isEqualTo(animeToSave).hasNoNullFieldsOrProperties();

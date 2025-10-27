@@ -22,7 +22,7 @@ class ProducerHardCodedRepositoryTest {
 
     @Mock
     private ProducerData producerData;
-    private final List<Producer> producerList = new ArrayList<>();
+    private List<Producer> producerList;
 
     @BeforeEach
     void init(){
@@ -30,7 +30,7 @@ class ProducerHardCodedRepositoryTest {
         var madHouse = Producer.builder().id(2L).name("Made House").createdAt(LocalDateTime.now()).build();
         var netflix = Producer.builder().id(3L).name("Netflix").createdAt(LocalDateTime.now()).build();
 
-        producerList.addAll(List.of(kyotoAnimation, madHouse, netflix));
+        producerList = new ArrayList<>(List.of(kyotoAnimation, madHouse, netflix));
 
     }
 
