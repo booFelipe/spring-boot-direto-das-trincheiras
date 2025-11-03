@@ -1,5 +1,6 @@
 package academy.devdojo.repository;
 
+import academy.devdojo.commons.ProducerUtils;
 import academy.devdojo.domain.Producer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
@@ -10,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,20 +24,18 @@ class ProducerHardCodedRepositoryTest {
     private ProducerData producerData;
     private List<Producer> producerList;
 
+    @InjectMocks
+    private ProducerUtils producerUtils;
+
     @BeforeEach
-    void init(){
-        var kyotoAnimation = Producer.builder().id(1L).name("Kyoto Animation").createdAt(LocalDateTime.now()).build();
-        var madHouse = Producer.builder().id(2L).name("Made House").createdAt(LocalDateTime.now()).build();
-        var netflix = Producer.builder().id(3L).name("Netflix").createdAt(LocalDateTime.now()).build();
-
-        producerList = new ArrayList<>(List.of(kyotoAnimation, madHouse, netflix));
-
+    void init() {
+        producerList = producerUtils.newProducerList();
     }
 
     @Test
     @DisplayName("findAll should return a list with all producers")
     @Order(1)
-    void findAll_ReturnAllProducers_WhenSuccessful(){
+    void findAll_ReturnAllProducers_WhenSuccessful() {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
         var producers = repository.findAll();
         Assertions.assertThat(producers).isNotNull().hasSize(producers.size());
@@ -46,7 +44,7 @@ class ProducerHardCodedRepositoryTest {
     @Test
     @DisplayName("findById returns a producer with given id")
     @Order(2)
-    void findAll_ReturnsProducerById_WhenSuccessful(){
+    void findAll_ReturnsProducerById_WhenSuccessful() {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
 
         var expectedProducer = producerList.getFirst();
@@ -82,7 +80,7 @@ class ProducerHardCodedRepositoryTest {
     void save_CreatesProducer_WhenSuccessful() {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
 
-        var producerToSave = Producer.builder().id(99L).name("MAPPA").createdAt(LocalDateTime.now()).build();
+        var producerToSave = producerUtils.newProducerToSave();
         var producer = repository.save(producerToSave);
 
         Assertions.assertThat(producer).isEqualTo(producerToSave).hasNoNullFieldsOrProperties();
@@ -125,5 +123,5 @@ class ProducerHardCodedRepositoryTest {
         Assertions.assertThat(producerUpdatedOptional.get().getName()).isEqualTo(producerToUpdate.getName());
     }
 
-  
+
 }
