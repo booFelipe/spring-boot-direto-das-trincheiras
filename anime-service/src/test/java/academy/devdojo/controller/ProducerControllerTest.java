@@ -14,14 +14,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 //teste entre a camada de integração e unitario (Sliced Test) - focado no controller, n starta o tomcat é + rapido
@@ -29,6 +27,7 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ComponentScan(basePackages = "academy.devdojo") // faz o que a linha abaixo commentada faz..
 //@Import({ProducerMapperImpl.class, ProducerService.class, ProducerHardCodedRepository.class, ProducerData.class})
+@ActiveProfiles("test")
 class ProducerControllerTest {
 
     private static final String URL = "/v1/producers";
@@ -103,7 +102,7 @@ class ProducerControllerTest {
         var response = fileUtils.readResourceFile("producer/get-producer-by-id-200.json");
         var id = 1L;
 
-        mockMvc.perform(MockMvcRequestBuilders.get(URL+"/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(response));
@@ -116,7 +115,7 @@ class ProducerControllerTest {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
         var id = 99L;
 
-        mockMvc.perform(MockMvcRequestBuilders.get(URL+"/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.status().reason("Producer not Found"));
@@ -184,7 +183,7 @@ class ProducerControllerTest {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
         var id = producerList.getFirst().getId();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(URL+"/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
@@ -196,7 +195,7 @@ class ProducerControllerTest {
         BDDMockito.when(producerData.getProducers()).thenReturn(producerList);
         var id = 99L;
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(URL+"/{id}", id))
+        mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.status().reason("Producer not Found"));

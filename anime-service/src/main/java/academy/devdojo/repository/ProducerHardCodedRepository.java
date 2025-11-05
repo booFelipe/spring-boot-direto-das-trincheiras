@@ -1,5 +1,6 @@
 package academy.devdojo.repository;
 
+import academy.devdojo.config.Connection;
 import academy.devdojo.domain.Producer;
 import academy.devdojo.mapper.ProducerMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,10 @@ import java.util.Optional;
 public class ProducerHardCodedRepository {
 
     private final ProducerData producerData;
-
+    private final Connection connection;
 
     public List<Producer> findAll() {
+        log.info("Connection {}", connection);
         return producerData.getProducers();
     }
 

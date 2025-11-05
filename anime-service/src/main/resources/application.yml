@@ -19,6 +19,6 @@ server:
       max: 20
 
 database:
-  url: localhost:3306
-  username: devdojo
-  password: devdojo
+  url: ${DB_URL:localhost}:${PORT:3306}
+  username: ${LOCAL_USERNAME:boozera}
+  password: ${LOCAL_PASSWORD:devdojo}
