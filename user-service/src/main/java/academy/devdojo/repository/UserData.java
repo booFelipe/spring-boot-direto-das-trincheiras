@@ -12,7 +12,7 @@ public class UserData {
     private final List<User> users = new ArrayList<User>();
 
     {
-        var usr1 = User.builder().id(1L).firstName("Felipe").lastName("Araujo").email("felipergfm@gmail.com").build();
+        var usr1 = User.builder().id(1L).firstName("Kakashi").lastName("Araujo").email("felipergfm@gmail.com").build();
         var usr2 = User.builder().id(2L).firstName("Magali").lastName("Lima").email("lilima@gmail.com").build();
         var usr3 = User.builder().id(3L).firstName("João").lastName("Bento").email("joao@gmail.com").build();
         users.addAll(List.of(usr1, usr2, usr3));

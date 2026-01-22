@@ -11,8 +11,8 @@ public class UserUtils {
 
     public List<User> newUserList() {
         var usr1 = User.builder().id(1L).firstName("Kakashi").lastName("Araujo").email("felipergfm@gmail.com").build();
-        var usr2 = User.builder().id(1L).firstName("Pedro").lastName("Lima").email("lilima@gmail.com").build();
-        var usr3 = User.builder().id(1L).firstName("Sasuke").lastName("Bento").email("joao@gmail.com").build();
+        var usr2 = User.builder().id(2L).firstName("Pedro").lastName("Lima").email("lilima@gmail.com").build();
+        var usr3 = User.builder().id(3L).firstName("Sasuke").lastName("Bento").email("joao@gmail.com").build();
 
         return new ArrayList<>(List.of(usr1, usr2, usr3));
 

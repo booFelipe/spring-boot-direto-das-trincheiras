@@ -6,13 +6,16 @@ import academy.devdojo.repository.UserHardCodedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -48,13 +51,13 @@ class UserServiceTest {
     @Test
     @DisplayName("findByName returns list with found object when firstName exists")
     @Order(2)
-    void findByName_ReturnsFoundProducerInList_WhenFirstNameIsFound() {
+    void findByName_ReturnsFoundUserInList_WhenFirstNameIsFound() {
         var user = userList.getFirst();
-        var expectedProducersFound = Collections.singletonList(user);
-        BDDMockito.when(repository.findByFirstName(user.getFirstName())).thenReturn(expectedProducersFound);
+        var expectedUsersFound = Collections.singletonList(user);
+        BDDMockito.when(repository.findByFirstName(user.getFirstName())).thenReturn(expectedUsersFound);
 
         var users = service.findAll(user.getFirstName());
-        org.assertj.core.api.Assertions.assertThat(users).containsAll(expectedProducersFound);
+        org.assertj.core.api.Assertions.assertThat(users).containsAll(expectedUsersFound);
     }
 
     @Test
@@ -66,6 +69,92 @@ class UserServiceTest {
 
         var users = service.findAll(firstName);
         Assertions.assertThat(users).isNotNull().isEmpty();
+    }
+    
+    @Test
+    @DisplayName("findById returns an user with given id")
+    @Order(4)
+    void findById_ReturnsUserById_WhenSuccessful(){
+        var expectedUser = userList.getFirst();
+        var expectedUsersFound = Optional.of(expectedUser);
+        BDDMockito.when(repository.findById(expectedUser.getId())).thenReturn(expectedUsersFound);
+
+        var users = service.findByIdOrThrowNotFound(expectedUser.getId());
+        Assertions.assertThat(users).isEqualTo(expectedUser);
+    }
+
+    @Test
+    @DisplayName("findById returns a Throws ResponseStatusException when User is not Found")
+    @Order(5)
+    void findById_ReturnsResponseStatusException_WhenUserIsNotFound(){
+        var expectedUser = userList.getFirst();
+        BDDMockito.when(repository.findById(expectedUser.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThatException()
+                .isThrownBy(() -> service.findByIdOrThrowNotFound(expectedUser.getId()))
+                .isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    @DisplayName("save creates an user")
+    @Order(6)
+    void save_CreatesUser_WhenSuccessful() {
+        var userToSave = userUtils.newUserToSave();
+
+        BDDMockito.when(repository.save(userToSave)).thenReturn(userToSave);
+
+        var savedUser = service.save(userToSave);
+
+        Assertions.assertThat(savedUser).isEqualTo(userToSave).hasNoNullFieldsOrProperties();
+    }
+
+    @Test
+    @DisplayName("delete removes an user")
+    @Order(7)
+    void delete_RemoveUser_WhenSuccessful() {
+        var userToDelete = userList.getFirst();
+        BDDMockito.when(repository.findById(userToDelete.getId())).thenReturn(Optional.of(userToDelete));
+        BDDMockito.doNothing().when(repository).delete(userToDelete);
+
+        Assertions.assertThatNoException().isThrownBy(() -> service.delete(userToDelete.getId()));
+    }
+
+    @Test
+    @DisplayName("delete throws ResponseStatusException when user is not found")
+    @Order(8)
+    void delete_ThrowsResponseStatusException_WhenUserIsNotFound() {
+        var userToDelete = userList.getFirst();
+        BDDMockito.when(repository.findById(userToDelete.getId())).thenReturn(Optional.empty());
+
+        Assertions.assertThatException()
+                .isThrownBy(() ->  service.delete(userToDelete.getId()))
+                .isInstanceOf(ResponseStatusException.class);
+    }
+
+    @Test
+    @DisplayName("update updates an user")
+    @Order(9)
+    void update_UpdatesUser_WhenSuccessful() {
+        var userToUpdate = userList.getFirst();
+        userToUpdate.setFirstName("Danzu");
+
+        BDDMockito.when(repository.findById(userToUpdate.getId())).thenReturn(Optional.of(userToUpdate));
+        BDDMockito.doNothing().when(repository).update(userToUpdate);
+
+        Assertions.assertThatNoException().isThrownBy(() ->  service.update(userToUpdate));
+    }
+
+    @Test
+    @DisplayName("update throws ResponseStatusException when user is not found")
+    @Order(10)
+    void update_ThrowsResponseStatusException_WhenUserIsNotFound() {
+        var userToUpdate = userList.getFirst();
+
+        BDDMockito.when(repository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty());
+
+        Assertions.assertThatException()
+                .isThrownBy(() ->  service.update(userToUpdate))
+                .isInstanceOf(ResponseStatusException.class);
     }
 
 }

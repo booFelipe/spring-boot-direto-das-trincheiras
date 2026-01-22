@@ -1,1 +1,6 @@
-{"id":1,"name":"Ufotable"}
+{
+  "id": 1,
+  "firstName": "Ash",
+  "lastName": "Ketchun",
+  "email": "pokemon@gmail.com"
+}
